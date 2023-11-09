@@ -24,7 +24,7 @@ outputs:
     build:
       entry_points:
         - dbt = dbt.cli.main:cli
-    script: python -m pip install --no-deps --no-build-isolation -v ./dbt-core
+      script: python -m pip install --no-deps --no-build-isolation -v ./dbt-core
     requirements:
       host:
         - pip
@@ -75,7 +75,8 @@ outputs:
         - pip
 
   - name: dbt-postgres
-    script: python -m pip install --no-deps --no-build-isolation -v ./dbt-postgres
+    build:
+      script: python -m pip install --no-deps --no-build-isolation -v ./dbt-postgres
     requirements:
       host:
         - pip
