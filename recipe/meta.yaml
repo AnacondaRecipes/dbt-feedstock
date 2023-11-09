@@ -24,7 +24,7 @@ outputs:
     build:
       entry_points:
         - dbt = dbt.cli.main:cli
-      script: python -m pip install --no-deps --no-build-isolation -v ./dbt-core
+    script: python -m pip install --no-deps --no-build-isolation -v ./dbt-core
     requirements:
       host:
         - pip
@@ -75,8 +75,7 @@ outputs:
         - pip
 
   - name: dbt-postgres
-    build:
-      script: python -m pip install --no-deps --no-build-isolation -v ./dbt-postgres
+    script: python -m pip install --no-deps --no-build-isolation -v ./dbt-postgres
     requirements:
       host:
         - pip
@@ -110,9 +109,13 @@ outputs:
 
 about:
   home: https://github.com/dbt-labs/dbt
-  summary: With dbt, data analysts and engineers can build analytics the way engineers build applications.
+  summary: dbt enables data analysts and engineers to transform their data using the same practices that software engineers use to build applications.
+  description: dbt enables data analysts and engineers to transform their data using the same practices that software engineers use to build applications.
   license: Apache-2.0
-  license_file: License.md
+  license_family: Apache
+  license_file: {{ SRC_DIR }}/dbt-core-git/License.md
+  dev_url: https://github.com/dbt-labs/dbt-core
+  doc_url: https://docs.getdbt.com/
 
 extra:
   recipe-maintainers:
@@ -120,3 +123,5 @@ extra:
     - jthandy
     - maresb
     - thewchan
+  skip-lints:
+    - missing_pip_check
