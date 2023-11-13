@@ -17,7 +17,8 @@ source:
 
 build:
   number: 0
-  skip: true  # [py<38]
+  # Skip s390x because we don't have agate on s390x.
+  skip: true  # [py<38 or s390x]
 
 outputs:
   - name: dbt-core
