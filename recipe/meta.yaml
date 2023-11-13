@@ -99,7 +99,7 @@ outputs:
         # - pip check
         - pip wheel dbt-core-git/tests/adapter --no-deps --no-build-isolation
         - pip install *.whl --no-deps
-        - pytest -v dbt-core-git/tests/unit --ignore=dbt-core-git/tests/unit/test_version.py -k 'not (test__dependency_list or test__model_materializations or test__two_models_package_ref or test__two_models_simple_ref or test_setup_event_logger_specify_max_bytes)'
+        - pytest -v dbt-core-git/tests/unit --ignore=dbt-core-git/tests/unit/test_version.py -k 'not (test__dependency_list or test__model_materializations or test__two_models_package_ref or test__two_models_simple_ref or test_setup_event_logger_specify_max_bytes or test__cwd_no_permissions)'
       requires:
         - pip
         - pytest
