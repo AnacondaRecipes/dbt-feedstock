@@ -99,7 +99,12 @@ outputs:
       commands:
         # - pip check
         - pip install dbt-core-git/tests/adapter --no-deps --no-build-isolation
-        - pytest -v dbt-core-git/tests/unit --ignore=dbt-core-git/tests/unit/test_version.py -k "not (test__dependency_list or test__model_materializations or test__two_models_package_ref or test__two_models_simple_ref or test_setup_event_logger_specify_max_bytes or test__cwd_no_permissions"
+
+        {% set skip_tests = 'test__dependency_list or test__model_materializations or test__two_models_package_ref or test__two_models_simple_ref or test_setup_event_logger_specify_max_bytes or test__cwd_no_permissions' %}
+        # See https://github.com/dbt-labs/dbt-core/issues/9066
+        {% set skip_tests = skip_tests + ' or test_from_dict__build or test_partial_parse_file_path or (GenericTestParserTest and test_basic) or test_extra_dict_on_event or (TestUntarPackage and (test_untar_package_success or test_untar_package_empty))' %}  # [win]
+
+        - pytest -v dbt-core-git/tests/unit --ignore=dbt-core-git/tests/unit/test_version.py -k "not ({{ skip_tests }})"
       requires:
         - pip
         - pytest
