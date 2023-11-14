@@ -1,7 +1,5 @@
 channels:
   - sfe1ed40
-  - https://staging.continuum.io/prefect/fs/dbt-semantic-interfaces-feedstock/pr1/cd87abc
-  - https://staging.continuum.io/prefect/fs/dbt-extractor-feedstock/pr5/70382bc
 
 upload_channels:
   - sfe1ed40
