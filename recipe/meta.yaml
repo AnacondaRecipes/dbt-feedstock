@@ -8,6 +8,8 @@ package:
 source:
   url: https://github.com/dbt-labs/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
   sha256: 9dec1c3c9e8558311848830ccab8e6d4909a54262a3285a2962bab1f10226921
+  patches:
+    - patches/0001-Downgrade-protobug-version.patch
 
 build:
   number: 0
@@ -15,8 +17,12 @@ build:
     - dbt = dbt.cli.main:cli
   script: {{ PYTHON }} -m pip install ./core -vv --no-deps --no-build-isolation
   skip: True  # [py<39 or py>312]
+  skip: True  # [s390x]
 
 requirements:
+  build: 
+    - patch  # [not win]
+    - m2-patch  # [win]
   host:
     - pip
     - python
@@ -33,7 +39,7 @@ requirements:
     - logbook >=1.5,<1.6
     - click >=8.0.2,<9.0
     - networkx >=2.3,<4.0
-    - protobuf >=5.0,<6.0
+    - protobuf >=4.0.0,<5.0
     - requests <3.0.0
     - pathspec >=0.9,<0.13
     - sqlparse >=0.5.0,<0.6.0
@@ -51,12 +57,12 @@ requirements:
 # Skip tests reason: Have dependencies on the dbt-postgres
 # But dbt-postgres can`t build without dbt-core.
 # https://github.com/dbt-labs/dbt-postgres/blob/v1.9.0/pyproject.toml#L29
-{% set ignore_tests = "" %}
-{% set ignore_tests = " --ignore=tests/functional/adapter/unit_testing/test_unit_testing.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit/config/test_profile.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit/context/test_context.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit/graph/test_selector.py" %}
-{% set ignore_tests = ignore_tests + " --ignore=tests/unit/task/test_retry.py" %}
+#{% set ignore_tests = "" %}
+#{% set ignore_tests = " --ignore=tests/functional/adapter/unit_testing/test_unit_testing.py" %}
+#{% set ignore_tests = ignore_tests + " --ignore=tests/unit/config/test_profile.py" %}
+#{% set ignore_tests = ignore_tests + " --ignore=tests/unit/context/test_context.py" %}
+#{% set ignore_tests = ignore_tests + " --ignore=tests/unit/graph/test_selector.py" %}
+#{% set ignore_tests = ignore_tests + " --ignore=tests/unit/task/test_retry.py" %}
 
 test:
   source_files:
@@ -72,8 +78,6 @@ test:
     - pip
     - pytest
     - hypothesis
-    - freezegun >=1.4.0,<1.5
-
 
 about:
   home: https://github.com/dbt-labs/dbt
