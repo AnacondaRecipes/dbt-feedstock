@@ -9,14 +9,15 @@ source:
   url: https://github.com/dbt-labs/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
   sha256: 9dec1c3c9e8558311848830ccab8e6d4909a54262a3285a2962bab1f10226921
   patches:
-    - patches/0001-Downgrade-protobug-version.patch
+    - patches/0001-Downgrade-protobuf-version.patch
 
 build:
   number: 0
   entry_points:
     - dbt = dbt.cli.main:cli
   script: {{ PYTHON }} -m pip install ./core -vv --no-deps --no-build-isolation
-  skip: True  # [py<39 or py>312]
+  # logbook not avaliable on python3.12
+  skip: True  # [py<39 or py>311]
   skip: True  # [s390x]
 
 requirements:
