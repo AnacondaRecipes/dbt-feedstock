@@ -1,127 +1,94 @@
-{% set version = "1.7.1" %}
+{% set name = "dbt-core" %}
+{% set version = "1.8.9" %}
 
 package:
-  name: dbt
+  name: {{ name|lower }}
   version: {{ version }}
 
 source:
-  - url: https://pypi.io/packages/source/d/dbt-core/dbt-core-{{ version }}.tar.gz
-    sha256: 78ac4711f35f7b7b1ad4bb17181b900ff9e15aed424e432e336fe110fec5981e
-    folder: dbt-core
-  - url: https://pypi.io/packages/source/d/dbt-postgres/dbt-postgres-{{ version }}.tar.gz
-    sha256: cef8ffcf79d352d8cbc89a939753a546f2aad183688bd78743f385882bb9e001
-    folder: dbt-postgres
-  - url: https://github.com/dbt-labs/dbt-core/archive/refs/tags/v{{ version }}.zip
-    sha256: 226f508d23edd9ad7688db68829c0a10b19f33ac79ceecd03474b467fe2839de
-    folder: dbt-core-git
+  url: https://github.com/dbt-labs/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
+  sha256: 9dec1c3c9e8558311848830ccab8e6d4909a54262a3285a2962bab1f10226921
+  patches:
+    - patches/0001-Downgrade-protobuf-version.patch
 
 build:
   number: 0
-  # Skip s390x because we don't have agate on s390x.
-  skip: true  # [py<38 or s390x]
+  entry_points:
+    - dbt = dbt.cli.main:cli
+  script: {{ PYTHON }} -m pip install ./core -vv --no-deps --no-build-isolation
+  # logbook not avaliable on python3.12
+  skip: True  # [py<39 or py>311]
+  skip: True  # [s390x]
 
-outputs:
-  - name: dbt-core
-    build:
-      entry_points:
-        - dbt = dbt.cli.main:cli
-      script: python -m pip install --no-deps --no-build-isolation -v ./dbt-core
-    requirements:
-      host:
-        - pip
-        - python
-        - setuptools
-        - wheel
-      run:
-        - python
+requirements:
+  build: 
+    - patch  # [not win]
+    - m2-patch  # [win]
+  host:
+    - pip
+    - python
+    - wheel
+    - setuptools
+  run:
+    - python
+    # Mashumaro is installed as "mashumaro[msgpack]", so the following comes from
+    # the "extras_require" section of https://github.com/Fatal1ty/mashumaro/blob/master/setup.py
+    - msgpack-python >=0.5.6
+    - agate >=1.7.0,<1.10
+    - jinja2 >=3.1.3,<4
+    - mashumaro >=3.9,<4.0
+    - logbook >=1.5,<1.6
+    - click >=8.0.2,<9.0
+    - networkx >=2.3,<4.0
+    - protobuf >=4.0.0,<5.0
+    - requests <3.0.0
+    - pathspec >=0.9,<0.13
+    - sqlparse >=0.5.0,<0.6.0
+    - dbt-extractor >=0.5.0,<=0.6
+    - minimal-snowplow-tracker >=0.0.2,<0.1
+    - dbt-semantic-interfaces >=0.5.1,<0.6
+    - dbt-common >=1.0.4,<2.0
+    - dbt-adapters >=1.1.1,<2.0
+    - packaging >20.9
+    - pytz >=2015.7
+    - pyyaml >=6.0
+    - daff >=1.3.46
+    - typing_extensions >=4.4
 
-        # Mashumaro is installed as "mashumaro[msgpack]", so the following comes from
-        # the "extras_require" section of https://github.com/Fatal1ty/mashumaro/blob/master/setup.py
-        - msgpack-python >=0.5.6
+# Skip tests reason: Have dependencies on the dbt-postgres
+# But dbt-postgres can`t build without dbt-core.
+# https://github.com/dbt-labs/dbt-postgres/blob/v1.9.0/pyproject.toml#L29
+#{% set ignore_tests = "" %}
+#{% set ignore_tests = " --ignore=tests/functional/adapter/unit_testing/test_unit_testing.py" %}
+#{% set ignore_tests = ignore_tests + " --ignore=tests/unit/config/test_profile.py" %}
+#{% set ignore_tests = ignore_tests + " --ignore=tests/unit/context/test_context.py" %}
+#{% set ignore_tests = ignore_tests + " --ignore=tests/unit/graph/test_selector.py" %}
+#{% set ignore_tests = ignore_tests + " --ignore=tests/unit/task/test_retry.py" %}
 
-        # Generated with Grayskull
-        - agate >=1.7.1,<1.8.dev0
-        - jinja2 >=3.1.2,<3.2.dev0
-        - mashumaro >=3.9
-        - logbook >=1.5,<1.6
-        - click >=8.0.2,<9
-        - networkx >=2.3,<4
-        - colorama >=0.3.9,<0.5
-        - pathspec >=0.9,<0.12
-        - isodate >=0.6,<0.7
-        - sqlparse >=0.2.3,<0.5
-        - dbt-extractor >=0.5.0,<0.6.dev0
-        - hologram >=0.0.16,<0.1.dev0
-        - minimal-snowplow-tracker >=0.0.2,<0.1.dev0
-        - dbt-semantic-interfaces >=0.4.0,<0.5.dev0
-        - jsonschema >=3.0
-        - packaging >20.9
-        # We are diverging from upstream here. protobuf 3 works.
-        - protobuf >=3.0.0
-        - pytz >=2015.7
-        - pyyaml >=6.0
-        - typing-extensions >=3.7.4
-        - cffi >=1.9,<2.0.0
-        - idna >=2.5,<4
-        - requests <3.0.0
-        - urllib3 >=1.0,<2.dev0
-    test:
-      imports:
-        - dbt
-        - dbt.adapters
-      commands:
-        # - pip check
-        - dbt --help
-      requires:
-        - pip
-
-  - name: dbt-postgres
-    build:
-      script: python -m pip install --no-deps --no-build-isolation -v ./dbt-postgres
-    requirements:
-      host:
-        - pip
-        - python
-        - setuptools
-        - wheel
-      run:
-        - python
-        - {{ pin_subpackage("dbt-core", exact=True) }}
-        # Generated with Grayskull
-        - psycopg2 >=2.8,<3.dev0
-        - agate
-    test:
-      source_files:
-        - dbt-core-git/tests
-      imports:
-        - dbt
-        - dbt.adapters
-      commands:
-        # - pip check
-        - pip install dbt-core-git/tests/adapter --no-deps --no-build-isolation
-
-        {% set skip_tests = 'test__dependency_list or test__model_materializations or test__two_models_package_ref or test__two_models_simple_ref or test_setup_event_logger_specify_max_bytes or test__cwd_no_permissions' %}
-        # See https://github.com/dbt-labs/dbt-core/issues/9066
-        {% set skip_tests = skip_tests + ' or test_from_dict__build or test_partial_parse_file_path or (GenericTestParserTest and test_basic) or test_extra_dict_on_event or (TestUntarPackage and (test_untar_package_success or test_untar_package_empty))' %}  # [win]
-
-        - pytest -v dbt-core-git/tests/unit --ignore=dbt-core-git/tests/unit/test_version.py -k "not ({{ skip_tests }})"
-      requires:
-        - pip
-        - pytest
-        - hypothesis
-        - freezegun
-        - setuptools
-        - wheel
+test:
+  #source_files:
+  #  - tests
+  imports:
+    - dbt
+    - dbt.adapters
+  commands:
+    - pip check
+    - dbt --help
+    #- pytest -vvv {{ ignore_tests }} tests
+  requires:
+    - pip
+    - pytest
+    - hypothesis
 
 about:
   home: https://github.com/dbt-labs/dbt
-  summary: dbt enables data analysts and engineers to transform their data using the same practices that software engineers use to build applications.
-  description: dbt enables data analysts and engineers to transform their data using the same practices that software engineers use to build applications.
+  summary: With dbt, data analysts and engineers can build analytics the way engineers build applications.
   license: Apache-2.0
+  license_file: License.md
   license_family: Apache
-  license_file: {{ SRC_DIR }}/dbt-core-git/License.md
+  description: dbt enables data analysts and engineers to transform their data using the same practices that software engineers use to build applications.
   dev_url: https://github.com/dbt-labs/dbt-core
-  doc_url: https://docs.getdbt.com/
+  doc_url: https://www.getdbt.com/
 
 extra:
   recipe-maintainers:
@@ -129,5 +96,3 @@ extra:
     - jthandy
     - maresb
     - thewchan
-  skip-lints:
-    - missing_pip_check
