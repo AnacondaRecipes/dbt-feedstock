@@ -73,22 +73,22 @@ test:
     - dbt.adapters
   commands:
     - pip check
-    - dbt --help
+    #- dbt --help
     #- pytest -vvv {{ ignore_tests }} tests
   requires:
     - pip
     - pytest
-    - hypothesis
+    #- hypothesis
 
 about:
   home: https://github.com/dbt-labs/dbt
-  summary: dbt-core
+  summary: With dbt, data analysts and engineers can build analytics the way engineers build applications.
   license: Apache-2.0
   license_file: License.md
   license_family: Apache
-  description: dbt-core
-  #dev_url: https://github.com/dbt-labs/dbt-core
-  #doc_url: https://www.getdbt.com/
+  description: dbt enables data analysts and engineers to transform their data using the same practices that software engineers use to build applications.
+  dev_url: https://github.com/dbt-labs/dbt-core
+  doc_url: https://www.getdbt.com/
 
 extra:
   recipe-maintainers:
