@@ -82,13 +82,13 @@ test:
 
 about:
   home: https://github.com/dbt-labs/dbt
-  summary: With dbt, data analysts and engineers can build analytics the way engineers build applications.
+  summary: dbt-core
   license: Apache-2.0
   license_file: License.md
   license_family: Apache
-  description: dbt
-  dev_url: https://github.com/dbt-labs/dbt-core
-  doc_url: https://www.getdbt.com/
+  description: dbt-core
+  #dev_url: https://github.com/dbt-labs/dbt-core
+  #doc_url: https://www.getdbt.com/
 
 extra:
   recipe-maintainers:
