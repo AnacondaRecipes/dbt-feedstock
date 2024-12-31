@@ -106,7 +106,7 @@ about:
   license_family: Apache
   description: dbt enables data analysts and engineers to transform their data using the same practices that software engineers use to build applications.
   dev_url: https://github.com/dbt-labs/dbt-core
-  doc_url: https://www.getdbt.com/
+  doc_url: https://docs.getdbt.com/
 
 extra:
   recipe-maintainers:
