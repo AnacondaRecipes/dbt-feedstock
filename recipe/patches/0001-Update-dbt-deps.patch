@@ -1,0 +1,27 @@
+From 78697d95800c352a1044e9680d3a19b3b710677b Mon Sep 17 00:00:00 2001
+From: Andrii Osipov <aosipov@anaconda.com>
+Date: Thu, 2 Jan 2025 14:38:20 -0800
+Subject: [PATCH] Update dbt deps
+
+---
+ core/setup.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/core/setup.py b/core/setup.py
+index 916fc47e3..94ec41224 100644
+--- a/core/setup.py
++++ b/core/setup.py
+@@ -75,8 +75,8 @@ setup(
+         "minimal-snowplow-tracker>=0.0.2,<0.1",
+         "dbt-semantic-interfaces>=0.5.1,<0.6",
+         # Minor versions for these are expected to be backwards-compatible
+-        "dbt-common>=1.0.4,<1.11.0",
+-        "dbt-adapters>=1.1.1,<1.7.1",
++        "dbt-common>=1.0.4,<2.0",
++        "dbt-adapters>=1.1.1,<2.0",
+         # ----
+         # Expect compatibility with all new versions of these packages, so lower bounds only.
+         "packaging>20.9",
+-- 
+2.39.3 (Apple Git-146)
+
