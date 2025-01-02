@@ -1,5 +1,5 @@
 {% set name = "dbt-core" %}
-{% set version = "1.8.9" %}
+{% set version = "1.8.8" %}
 
 package:
   name: {{ name|lower }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/dbt-labs/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: 9dec1c3c9e8558311848830ccab8e6d4909a54262a3285a2962bab1f10226921
+  sha256: 17f4761176ae3822266b9882dbe3b6014fa822fcf27baaaf69275e0dac01617c
   patches:
     - patches/0001-Update-dbt-deps.patch
 
