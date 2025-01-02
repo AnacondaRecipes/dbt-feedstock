@@ -9,7 +9,7 @@ source:
   url: https://github.com/dbt-labs/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
   sha256: 9dec1c3c9e8558311848830ccab8e6d4909a54262a3285a2962bab1f10226921
   patches:
-    - patches/0001-Downgrade-protobuf-version.patch
+    - patches/0001-Change-protobuf-version.patch
 
 build:
   number: 0
@@ -40,7 +40,7 @@ requirements:
     - logbook >=1.5,<1.6
     - click >=8.0.2,<9.0
     - networkx >=2.3,<4.0
-    - protobuf >=4.0.0,<5.0
+    - protobuf >=4.0.0,<6.0
     - requests <3.0.0
     - pathspec >=0.9,<0.13
     - sqlparse >=0.5.0,<0.6.0
