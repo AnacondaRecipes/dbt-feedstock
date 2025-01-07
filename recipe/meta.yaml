@@ -87,16 +87,15 @@ test:
   commands:
     - pip check
     - dbt --help
-    # Need to enable tests after the dbt-postgres are merged.
     # Unit tests
-    #- pytest -vvv {{ ignore_tests }} tests/unit
+    - pytest -vvv {{ ignore_tests }} tests/unit
     # Integration tests
-    #- pytest -vvv {{ passed_tests }}
+    - pytest -vvv {{ passed_tests }}
   requires:
     - pip
     - pytest >=7.4,<8.0
     - pytest-mock
-    #- dbt-postgres <=1.9.0
+    - dbt-postgres <=1.9.0
     - hypothesis
 
 about:
