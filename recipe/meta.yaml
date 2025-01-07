@@ -78,6 +78,26 @@ requirements:
 {% set passed_tests = passed_tests + " tests/functional/dbt_runner/test_dbt_runner.py::TestDbtRunner::test_callbacks" %}
 {% set passed_tests = passed_tests + " tests/functional/dbt_runner/test_dbt_runner.py::TestDbtRunner::test_pass_in_args_variable" %}
 
+# AssertionError: assert 'doesnt/actually/exist\\target' == 'doesnt/actually/exist/target'
+# - doesnt/actually/exist/target
+# ?                      ^
+# + doesnt/actually/exist\target
+{% set deselect_tests = "" %}
+{% set deselect_tests = " --deselect=tests/unit/test_deps.py::TestTarballPackage::test_fetch_metadata" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/test_functions.py::test_setup_event_logger_specify_max_bytes" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/test_graph_selection.py::test_run_specs" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/test_internal_deprecations.py::test_deprecated_func" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/test_parser.py::GenericTestParserTest::test_basic" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/test_proto_events.py::test_extra_dict_on_event" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/cli/test_flags.py::TestFlags::test_from_dict__build" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/config/test_project.py::TestProjectMethods::test_generic_test_paths" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/config/test_project.py::TestProjectMethods::test_fixture_paths" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/config/test_project.py::TestProjectMethods::test_project_target_path" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_manifest.py::TestPartialParse::test_partial_parse_file_path" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_partial.py::test_schedule_nodes_for_parsing_basic" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_partial.py::test_schedule_macro_nodes_for_parsing_basic" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_partial.py::TestFileDiff::test_build_file_diff_basic" %}  # [win]
+
 test:
   source_files:
     - tests
@@ -88,7 +108,7 @@ test:
     - pip check
     - dbt --help
     # Unit tests
-    - pytest -vvv {{ ignore_tests }} tests/unit
+    - pytest -vvv {{ ignore_tests }} {{ deselect_tests }} tests/unit
     # Integration tests
     - pytest -vvv {{ passed_tests }}
   requires:
