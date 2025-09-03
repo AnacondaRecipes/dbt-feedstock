@@ -1,5 +1,5 @@
 {% set name = "dbt-core" %}
-{% set version = "1.8.9" %}
+{% set version = "1.9.1" %}
 
 package:
   name: {{ name|lower }}
@@ -7,18 +7,16 @@ package:
 
 source:
   url: https://github.com/dbt-labs/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: 9dec1c3c9e8558311848830ccab8e6d4909a54262a3285a2962bab1f10226921
+  sha256: 7a7188d1f3bedc28fa4399d9908718e0569623b5dd6af0ef1ec7fbcd00e1803f
   patches:
     - patches/0001-Change-protobuf-version.patch
 
 build:
-  number: 1
+  number: 0
   entry_points:
     - dbt = dbt.cli.main:cli
   script: {{ PYTHON }} -m pip install ./core -vv --no-deps --no-build-isolation
-  # logbook not avaliable on python3.12
-  skip: True  # [py<39 or py>311]
-  skip: True  # [s390x]
+  skip: True  # [py<39]
 
 requirements:
   build: 
@@ -28,55 +26,32 @@ requirements:
     - pip
     - python
     - wheel
-    - setuptools
+    - setuptools >=40.1.0
   run:
     - python
-    # Mashumaro is installed as "mashumaro[msgpack]", so the following comes from
-    # the "extras_require" section of https://github.com/Fatal1ty/mashumaro/blob/master/setup.py
     - msgpack-python >=0.5.6
     - agate >=1.7.0,<1.10
     - jinja2 >=3.1.3,<4
-    - mashumaro >=3.9,<4.0
-    - logbook >=1.5,<1.6
+    - mashumaro >=3.9,<3.15
     - click >=8.0.2,<9.0
+    - jsonschema >=4.19.1,<5.0
     - networkx >=2.3,<4.0
-    - protobuf >=4.0.0,<6.0
+    - protobuf >=5.0,<7.0
     - requests <3.0.0
+    - snowplow-tracker >=1.0.2,<2.0
     - pathspec >=0.9,<0.13
     - sqlparse >=0.5.0,<0.6.0
     - dbt-extractor >=0.5.0,<=0.6
-    - minimal-snowplow-tracker >=0.0.2,<0.1
-    - dbt-semantic-interfaces >=0.5.1,<0.6
-    - dbt-common >=1.0.4,<2.0
-    - dbt-adapters >=1.1.1,<2.0
+    - dbt-semantic-interfaces >=0.9.0,<0.10
+    - dbt-common >=1.27.0,<2.0
+    - dbt-adapters >=1.15.2,<2.0
+    - dbt-protos >=1.0.346,<2.0
+    - pydantic <3
     - packaging >20.9
     - pytz >=2015.7
     - pyyaml >=6.0
     - daff >=1.3.46
     - typing_extensions >=4.4
-
-# Skip tests reason: No module named 'freezegun' (won`t build)
-{% set ignore_tests = "" %}
-{% set ignore_tests = " --ignore=tests/unit/contracts/graph/test_manifest.py" %}
-
-# Only 9 integration tests passed, all other tests in the tests/functional directory needs to build and run docker to start postgres database server.
-# Error message:
-#   raise FailedToConnectError(str(e))
-#   dbt.adapters.exceptions.connection.FailedToConnectError: Database Error
-#   connection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused
-#     Is the server running on that host and accepting TCP/IP connections?
-# Example on how to start psql server:
-# https://github.com/dbt-labs/dbt-postgres/blob/v1.9.0/pyproject.toml#L76
-{% set passed_tests = "" %}
-{% set passed_tests = " tests/functional/adapter/utils/test_validate_sql.py::TestValidateSqlMethod::test_validate_sql_failure" %}
-{% set passed_tests = passed_tests + " tests/functional/cli/test_resolvers.py::TestDefaultLogPathNoProject::test_default_log_path_no_project" %}
-{% set passed_tests = passed_tests + " tests/functional/dbt_runner/test_dbt_runner.py::TestDbtRunner::test_group_invalid_option" %}
-{% set passed_tests = passed_tests + " tests/functional/dbt_runner/test_dbt_runner.py::TestDbtRunner::test_command_invalid_option" %}
-{% set passed_tests = passed_tests + " tests/functional/dbt_runner/test_dbt_runner.py::TestDbtRunner::test_command_mutually_exclusive_option" %}
-{% set passed_tests = passed_tests + " tests/functional/dbt_runner/test_dbt_runner.py::TestDbtRunner::test_invalid_command" %}
-{% set passed_tests = passed_tests + " tests/functional/dbt_runner/test_dbt_runner.py::TestDbtRunner::test_invoke_version" %}
-{% set passed_tests = passed_tests + " tests/functional/dbt_runner/test_dbt_runner.py::TestDbtRunner::test_callbacks" %}
-{% set passed_tests = passed_tests + " tests/functional/dbt_runner/test_dbt_runner.py::TestDbtRunner::test_pass_in_args_variable" %}
 
 # AssertionError: assert 'doesnt/actually/exist\\target' == 'doesnt/actually/exist/target'
 # - doesnt/actually/exist/target
@@ -108,9 +83,7 @@ test:
     - pip check
     - dbt --help
     # Unit tests
-    - pytest -vvv {{ ignore_tests }} {{ deselect_tests }} tests/unit
-    # Integration tests
-    - pytest -vvv {{ passed_tests }}
+    - pytest -vvv {{ deselect_tests }} tests/unit
   requires:
     - pip
     - pytest >=7.4,<8.0
