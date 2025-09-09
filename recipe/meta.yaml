@@ -108,3 +108,5 @@ extra:
     - jthandy
     - maresb
     - thewchan
+  skip-lints:
+    - patch_unnecessary
