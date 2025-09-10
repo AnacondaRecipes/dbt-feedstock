@@ -111,6 +111,3 @@ extra:
     - thewchan
   skip-lints:
     - patch_unnecessary
-    - missing_imports_or_run_test_py
-    - missing_pip_check
-    - missing_tests
