@@ -12,7 +12,7 @@ source:
     - patches/0001-Change-protobuf-version.patch
 
 build:
-  number: 0
+  number: 1
   entry_points:
     - dbt = dbt.cli.main:cli
   script: {{ PYTHON }} -m pip install ./core -vv --no-deps --no-build-isolation
