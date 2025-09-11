@@ -12,7 +12,7 @@ source:
     - patches/0001-Change-protobuf-version.patch
 
 build:
-  number: 0
+  number: 1
   entry_points:
     - dbt = dbt.cli.main:cli
   script: {{ PYTHON }} -m pip install ./core -vv --no-deps --no-build-isolation
@@ -53,10 +53,7 @@ requirements:
     - daff >=1.3.46
     - typing_extensions >=4.4
 
-# AssertionError: assert 'doesnt/actually/exist\\target' == 'doesnt/actually/exist/target'
-# - doesnt/actually/exist/target
-# ?                      ^
-# + doesnt/actually/exist\target
+# Errors with Windows-style backslashes (\) in file pathses
 {% set deselect_tests = "" %}
 {% set deselect_tests = " --deselect=tests/unit/test_deps.py::TestTarballPackage::test_fetch_metadata" %}  # [win]
 {% set deselect_tests = deselect_tests + " --deselect=tests/unit/test_functions.py::test_setup_event_logger_specify_max_bytes" %}  # [win]
@@ -72,27 +69,46 @@ requirements:
 {% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_partial.py::test_schedule_nodes_for_parsing_basic" %}  # [win]
 {% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_partial.py::test_schedule_macro_nodes_for_parsing_basic" %}  # [win]
 {% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_partial.py::TestFileDiff::test_build_file_diff_basic" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/test_artifact_upload.py::TestUploadArtifacts::test_upload_artifacts_default_target_path" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/test_artifact_upload.py::TestUploadArtifacts::test_upload_artifacts_successful_upload" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/test_env_vars.py::test_validate_engine_env_vars" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/deps/test_deps.py::TestTarballPackage::test_fetch_metadata" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/events/test_logging.py::TestSetupEventLogger::test_specify_max_bytes" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/events/test_types.py::test_extra_dict_on_event" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/graph/test_nodes.py::TestParsedNode::test_get_target_write_path" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/graph/test_nodes.py::TestParsedNode::test_get_target_write_path_split" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_parser.py::SchemaParserVersionedModels::test__parse_versioned_model_tests" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_parser.py::SchemaParserVersionedModels::test__parsed_versioned_models" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_parser.py::SchemaParserVersionedModels::test__parsed_versioned_models_contract_enforced" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_parser.py::SchemaParserVersionedModels::test__parsed_versioned_models_v0" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_parser.py::SchemaParserVersionedModels::test__parsed_versioned_models_v0_latest_version" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_parser.py::SchemaParserVersionedModels::test__read_versioned_model_tests" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_parser.py::GenericTestParserTest::test_basic" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_partial.py::test_schedule_nodes_for_parsing_versioning" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_partial.py::TestFileDiff::test_get_parsing_files" %}  # [win]
 
-# CI failed with:
-# AttributeError: 'AttrDict' object has no attribute 'cmd'
-# Tests disabled, anyway --no-test is used because of cyclic dependency.
-#test:
-#  source_files:
-#    - tests
-#  imports:
-#    - dbt
-#    - dbt.adapters
-#  commands:
-#    - pip check
-#    - dbt --help
-#    # Unit tests
-#    - pytest -vvv {{ deselect_tests }} tests/unit
-#  requires:
-#    - pip
-#    - pytest >=7.4,<8.0
-#    - pytest-mock
-#    - dbt-postgres
-#    - hypothesis
+test:
+  source_files:
+    - tests
+    - core
+  imports:
+    - dbt
+    - dbt.adapters
+  commands:
+    - pip check
+    - dbt --help
+    # Tests are not adapted for py313:
+    # >   raise AttributeError(item)
+    # E   AttributeError: __class_getitem__
+    # Can be fixed with using latest typing_extensions in tests.
+    - python -m pytest -vvv {{ deselect_tests }} tests/unit  # [py<313]
+  requires:
+    - pip
+    - pytest >=7.4,<8.0
+    - pytest-mock
+    - dbt-postgres
+    - hypothesis
+    - freezegun
 
 about:
   home: https://github.com/dbt-labs/dbt
@@ -103,7 +119,7 @@ about:
   description: |
     dbt enables data analysts and engineers to transform their data using the same practices that software engineers use to build applications.
   dev_url: https://github.com/dbt-labs/dbt-core
-  doc_url: https://docs.getdbt.com/
+  doc_url: https://docs.getdbt.com
 
 extra:
   recipe-maintainers:
@@ -113,6 +129,3 @@ extra:
     - thewchan
   skip-lints:
     - patch_unnecessary
-    - missing_imports_or_run_test_py
-    - missing_pip_check
-    - missing_tests
