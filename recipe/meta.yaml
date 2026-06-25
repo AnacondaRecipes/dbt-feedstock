@@ -14,7 +14,9 @@ build:
   entry_points:
     - dbt = dbt.cli.main:cli
   script: {{ PYTHON }} -m pip install ./core -vv --no-deps --no-build-isolation
-  skip: True  # [py<310]
+  # mashumaro >=3.17 adds py314 support (https://github.com/Fatal1ty/mashumaro/pull/285);
+  # dbt-core 1.11.x pins mashumaro <3.15, so py314 cannot be satisfied until dbt-core raises that bound.
+  skip: True  # [py<310 or py>313]
 
 requirements:
   host:
