@@ -105,9 +105,10 @@ test:
     - pip
     - pytest >=7.4,<8.0
     - pytest-mock
-    - dbt-postgres
+    - dbt-postgres  # [py<314]
     - hypothesis
     - freezegun
+    - opentelemetry-sdk
 
 about:
   home: https://github.com/dbt-labs/dbt
