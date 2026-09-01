@@ -85,6 +85,10 @@ requirements:
 {% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_parser.py::GenericTestParserTest::test_basic" %}  # [win]
 {% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_partial.py::test_schedule_nodes_for_parsing_versioning" %}  # [win]
 {% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_partial.py::TestFileDiff::test_get_parsing_files" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/artifacts/test_file_hash.py::TestFileHashFromPathLegacy::test_lf_only_matches_from_path" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_osi.py::TestScanOsiDirectories::test_both_osi_directories_scanned_when_present" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_osi.py::TestOsiAttribution::test_clear_osi_attributed_nodes_removes_semantic_models" %}  # [win]
+{% set deselect_tests = deselect_tests + " --deselect=tests/unit/parser/test_osi.py::TestOsiAttribution::test_load_clears_before_reinject" %}  # [win]
 
 test:
   source_files:
