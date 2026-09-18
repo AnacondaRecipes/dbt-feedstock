@@ -10,12 +10,13 @@ source:
   sha256: 5c9f0037afa03725a47cfb78c70bd876ab01f7c24253f3775cd048950c054364
 
 build:
-  number: 0
+  number: 1
   entry_points:
     - dbt = dbt.cli.main:cli
   script: {{ PYTHON }} -m pip install ./core -vv --no-deps --no-build-isolation
   # logbook was removed from upstream requirements, so Python 3.12 is now supported
-  skip: true  # [py<39 or py>312]
+  # Python 3.14 requires mashumaro >=3.17, but dbt-core 1.9.4 requires mashumaro <3.15
+  skip: true  # [py<39 or py>313]
 
 requirements:
   host:
