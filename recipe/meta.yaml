@@ -1,5 +1,5 @@
 {% set name = "dbt-core" %}
-{% set version = "1.12.3" %}
+{% set version = "1.12.6" %}
 
 package:
   name: {{ name }}
@@ -7,7 +7,7 @@ package:
 
 source:
   url: https://github.com/dbt-labs/{{ name }}/archive/refs/tags/v{{ version }}.tar.gz
-  sha256: 83e613eff543e8b2d8f25784c568296af8fdee99b31eed98bec5fb17fa0c39b2
+  sha256: a5ad39a3abc071125c35e22d5185cbf9e5d78165ebd6240171b31b30f639178c
 
 build:
   number: 0
@@ -38,7 +38,7 @@ requirements:
     - pathspec >=0.9,<1.1
     - sqlparse >=0.5.5,<0.7.0
     - dbt-extractor >=0.5.0,<=0.6
-    - metricflow >=0.211.0,<1.0
+    - metricflow >=0.213.0,<1.0
     - dbt-common >=1.37.5,<2.0
     - dbt-adapters >=1.24.5,<2.0
     - dbt-protos >=1.0.514,<2.0
